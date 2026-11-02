@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Fast Delivery!!! </title>
+  <style>
+    :root { --pink: #ff6f9f; --deep: #8f3159; --cream: #fff8fb; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; display: grid; place-items: center;
+      padding: 24px; font-family: ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+      color: var(--deep);
+      background: radial-gradient(circle at top left, #ffe1ed, transparent 42%),
+                  linear-gradient(135deg, #fff8fb, #ffd5e5);
+      overflow-x: hidden;
+    }
+    .card {
+      width: min(100%, 520px); text-align: center; padding: 38px 26px 32px;
+      background: rgba(255,255,255,.82); border: 2px solid #fff;
+      border-radius: 30px; box-shadow: 0 18px 55px rgba(143,49,89,.14);
+      position: relative;
+    }
+    .sparkle { font-size: 2rem; letter-spacing: .3rem; }
+    h1 { font-size: clamp(2rem, 7vw, 3.1rem); line-height: 1.05; margin: 15px 0; }
+    .subtitle { font-size: 1.05rem; line-height: 1.6; margin: 0 auto 24px; max-width: 360px; }
+    .requests { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 25px 0; }
+    .request {
+      border: 1.5px solid #ffc0d6; border-radius: 18px; padding: 15px 5px;
+      background: #fff7fa; color: var(--deep); font: inherit; cursor: pointer;
+      transition: transform .18s, background .18s, border-color .18s;
+    }
+    .request:hover { transform: translateY(-3px); background: #ffe5ef; }
+    .request.selected { background: #ffd1e1; border-color: var(--pink); box-shadow: inset 0 0 0 1px var(--pink); }
+    .emoji { display: block; font-size: 2rem; margin-bottom: 6px; }
+    .send {
+      border: 0; border-radius: 999px; padding: 14px 28px; background: var(--pink);
+      color: white; font: inherit; font-weight: 800; font-size: 1rem; cursor: pointer;
+      box-shadow: 0 7px 0 #e65387; transition: transform .15s, box-shadow .15s;
+    }
+    .send:hover { transform: translateY(-2px); box-shadow: 0 9px 0 #e65387; }
+    .send:active { transform: translateY(3px); box-shadow: 0 4px 0 #e65387; }
+    #message { min-height: 54px; margin: 23px 0 0; font-weight: 700; line-height: 1.5; }
+    .tiny { margin-top: 18px; font-size: .82rem; opacity: .72; }
+    .floaty { position: fixed; bottom: -30px; pointer-events: none; animation: rise 3s ease-out forwards; z-index: 3; }
+    @keyframes rise { to { transform: translateY(-110vh) rotate(25deg); opacity: 0; } }
+    @media (max-width: 390px) { .card { padding: 30px 16px; } .requests { gap: 6px; } .request { font-size: .9rem; } }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="sparkle" aria-hidden="true">♡ ✦ ♡</div>
+    <h1> Choose carefully <br>send me some</h1>
+    <p class="subtitle">A little love, a few kisses, and a whole lot of hugs would be appreciated. Choose your payment method below. 💌</p>
+
+    <div class="requests" aria-label="Choose what to send">
+      <button class="request" data-kind="love" aria-pressed="false"><span class="emoji">💗</span>Love</button>
+      <button class="request" data-kind="kisses" aria-pressed="false"><span class="emoji">😘</span>Kisses</button>
+      <button class="request" data-kind="hugs" aria-pressed="false"><span class="emoji">🫂</span>Hugs</button>
+    </div>
+
+    <button class="send" id="send">Send my order ♡</button>
+    <p id="message" aria-live="polite">Your delivery is waiting…</p>
+    <div class="tiny">No refunds. Cuteness tax may apply. ✨</div>
+  </main>
+
+  <script>
+    const choices = new Set();
+    const messages = {
+      love: "Love received! 💗 My heart says thank you.",
+      kisses: "Kisses requested! 😘 Consider this a very cute virtual one.",
+      hugs: "Hugs incoming! 🫂 Sending a big, cozy virtual hug.",
+      all: "FULL ORDER CONFIRMED 💗😘🫂 Love, kisses, and hugs — all yours!"
+    };
+    document.querySelectorAll(".request").forEach(button => {
+      button.addEventListener("click", () => {
+        const kind = button.dataset.kind;
+        if (choices.has(kind)) {
+          choices.delete(kind);
+          button.classList.remove("selected");
+          button.setAttribute("aria-pressed", "false");
+        } else {
+          choices.add(kind);
+          button.classList.add("selected");
+          button.setAttribute("aria-pressed", "true");
+        }
+      });
+    });
+    document.getElementById("send").addEventListener("click", () => {
+      const message = document.getElementById("message");
+      if (!choices.size) {
+        message.textContent = "Excuse me… you have to choose something first. 🥺";
+        return;
+      }
+      message.textContent = choices.size === 3 ? messages.all :
+        [...choices].map(kind => messages[kind]).join(" ");
+      for (let i = 0; i < 14; i++) {
+        const heart = document.createElement("span");
+        heart.className = "floaty";
+        heart.textContent = ["💗", "💋", "🫂", "💕", "✨"][Math.floor(Math.random() * 5)];
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.style.fontSize = (18 + Math.random() * 22) + "px";
+        heart.style.animationDuration = (2 + Math.random() * 2) + "s";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 4200);
+      }
+    });
+  </script>
+</body>
+</html>
+ 
